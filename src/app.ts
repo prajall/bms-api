@@ -31,6 +31,9 @@ import { upload } from "./utils/multer.util";
 import { authValidation } from "./middlewares/auth.middleware";
 import bodyParser from "body-parser";
 import { checkMaintenanceMode } from "./middlewares/other.middleware";
+import { configDotenv } from "dotenv";
+
+configDotenv();
 
 const app = express();
 app.use(express.static("public"));
@@ -49,17 +52,14 @@ app.use(cookieParser());
 app.use(parseNestedFields);
 
 // CORS configuration
-//change
+const CORS = process.env.CORS_ORIGIN;
+const allowedOrigins = CORS ? JSON.parse(CORS) : [];
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:4173",
-      "https://kinniko.com",
-    ],
+    origin: allowedOrigins,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
-  })
+  }),
 );
 
 // Server checking
@@ -83,28 +83,28 @@ apiRoutes.use(
   checkMaintenanceMode,
   upload.none(),
   parseFormData,
-  userRoutes
+  userRoutes,
 );
 apiRoutes.use(
   "/installation",
   upload.none(),
   parseFormData,
   authValidation,
-  installationRoutes
+  installationRoutes,
 );
 apiRoutes.use(
   "/role",
   upload.none(),
   parseFormData,
   authValidation,
-  roleRoutes
+  roleRoutes,
 );
 apiRoutes.use(
   "/service",
   checkMaintenanceMode,
   upload.none(),
   parseFormData,
-  serviceRoutes
+  serviceRoutes,
 );
 apiRoutes.use(
   "/service-order",
@@ -112,7 +112,7 @@ apiRoutes.use(
   authValidation,
   upload.none(),
   parseFormData,
-  serviceOrderRoutes
+  serviceOrderRoutes,
 );
 apiRoutes.use(
   "/service-billing",
@@ -120,7 +120,7 @@ apiRoutes.use(
   upload.none(),
   parseFormData,
   authValidation,
-  serviceBillingRoutes
+  serviceBillingRoutes,
 );
 apiRoutes.use(
   "/pos",
@@ -128,7 +128,7 @@ apiRoutes.use(
   upload.none(),
   parseFormData,
   authValidation,
-  posRoutes
+  posRoutes,
 );
 apiRoutes.use("/config", upload.none(), parseFormData, configRoutes);
 apiRoutes.use(
@@ -137,7 +137,7 @@ apiRoutes.use(
   upload.none(),
   parseFormData,
   authValidation,
-  orderRoutes
+  orderRoutes,
 );
 apiRoutes.use(
   "/report",
@@ -145,14 +145,14 @@ apiRoutes.use(
   upload.none(),
   parseFormData,
   authValidation,
-  reportRoutes
+  reportRoutes,
 );
 apiRoutes.use(
   "/product-installation",
   authValidation,
   upload.none(),
   parseFormData,
-  productInstallationRoutes
+  productInstallationRoutes,
 );
 apiRoutes.use(
   "/dashboard",
@@ -160,7 +160,7 @@ apiRoutes.use(
   upload.none(),
   parseFormData,
   authValidation,
-  dashboardRoutes
+  dashboardRoutes,
 );
 
 // image upload routes
